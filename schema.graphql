@@ -1,0 +1,107 @@
+type Query {
+	QuickExec(code: String!): SnippetExecutionResponse!
+}
+
+type Runtime {
+	name: String!
+	system: Boolean
+    arn: String!
+	user: User!
+    executable: RuntimeType!
+	requirements: [String!]
+	description: String
+	Create(args: RuntimeInput!): Runtime!
+	Delete(id: String!): Boolean!
+	Get(id: String): Runtime!
+	List: RuntimeList!
+}
+
+input RuntimeInput {
+	name: String!
+	description: String
+	type: RuntimeType
+	requirements: [String!]
+}
+
+type RuntimeList {
+	next: AWSJSON
+	runtimes: [Runtime!]
+	count: Int!
+}
+
+enum RuntimeType {
+	python38
+}
+
+type Snippet {
+	user: User!
+    expires: String
+	name: String!
+	description: String!
+	public: Boolean!
+	permissions: [SnippetPermissions]!
+	code: String!
+	runtime: Runtime!
+	Create(snippet: SnippetInput!): Snippet!
+	Update(snippet: SnippetInput!): Snippet!
+	Execute(id: String!): SnippetExecutionResponse
+	Delete(id: String!): Boolean!
+	Get(user: AWSEmail, name: String!): Snippet
+	List(email: AWSEmail): SnippetList!
+}
+
+type SnippetExecutionResponse {
+	output: String
+	error: String
+}
+
+input SnippetInput {
+	name: String!
+	description: String
+	code: String
+	permissions: [SnippetPermissionInput]
+	public: Boolean
+}
+
+type SnippetList {
+	next: AWSJSON
+	snippets: [Snippet!]
+	count: Int!
+}
+
+input SnippetPermissionInput {
+	email: AWSEmail!
+	read: Boolean!
+	write: Boolean!
+}
+
+type SnippetPermissions {
+	user: AWSEmail!
+	read: Boolean!
+	write: Boolean!
+}
+
+type User {
+	firstName: String!
+	lastName: String!
+	email: String!
+	snippets: [Snippet!]
+	status: UserStatus!
+	activeDate: String!
+	Get(email: AWSEmail): User
+	Update(email: String, firstName: String, lastName: String): User!
+	Delete(email: String!): Boolean!
+	List: UserList!
+}
+
+type UserList {
+	next: AWSJSON
+	users: [User!]
+	count: Int!
+}
+
+enum UserStatus {
+	active
+	suspended
+	awaiting_confirmation
+}
