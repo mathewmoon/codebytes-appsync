@@ -35,7 +35,6 @@ enum RuntimeType {
 
 type Snippet {
 	user: User!
-    expires: String
 	name: String!
 	description: String!
 	public: Boolean!
@@ -52,13 +51,14 @@ type Snippet {
 
 type SnippetExecutionResponse {
 	output: String
-	error: String
+	errors: String
+    exit_code: Int
 }
 
 input SnippetInput {
 	name: String!
 	description: String
-	code: String
+	code: String!
 	permissions: [SnippetPermissionInput]
 	public: Boolean
 }
